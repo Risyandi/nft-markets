@@ -17,6 +17,7 @@ type KeyViperConfig interface {
 type viperConfig struct{}
 
 func (vr *viperConfig) InitConfig() {
+	// file types for config is json and file name is config.json
 	viper.SetConfigType(`json`)
 	viper.SetConfigFile(`config.json`)
 
