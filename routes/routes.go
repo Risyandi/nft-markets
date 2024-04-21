@@ -8,9 +8,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter(validate *validator.Validate) *gin.Engine {
 	router := gin.New()
 
 	// connection mongodb database
@@ -40,7 +41,7 @@ func SetupRouter() *gin.Engine {
 	group := router.Group("api/v1")
 	{
 		NftMarketGroup := group.Group("nftmarkets")
-		NftMarketsRoutes(NftMarketGroup, &nftmarketplace.NftMarketplaceController{})
+		NftMarketsRoutes(NftMarketGroup, &nftmarketplace.NftMarketplaceController{Validate: validate})
 	}
 
 	return router

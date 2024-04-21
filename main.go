@@ -4,7 +4,11 @@ import (
 	"nftmarkets/config"
 	"nftmarkets/middleware"
 	"nftmarkets/routes"
+
+	"github.com/go-playground/validator/v10"
 )
+
+var validate *validator.Validate
 
 func main() {
 	/**
@@ -13,8 +17,10 @@ func main() {
 	*   3. Middleware
 	**/
 
+	// Initialize the validator
+	validate = validator.New()
 	config := config.ConfigViper()
-	router := routes.SetupRouter()
+	router := routes.SetupRouter(validate)
 
 	if config.GetBool("server.log") {
 		router.Use(middleware.RequestLoggerMiddleware())
