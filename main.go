@@ -23,7 +23,7 @@ func main() {
 	validate = validator.New()
 	// Registering the custom validator
 	if err := validate.RegisterValidation("forbiddenwords", forbiddenWordsValidator); err != nil {
-		fmt.Println("Failed to register custom validation: %v\n", err)
+		fmt.Printf("Failed to register custom validation: %v\n", err)
 		return
 	}
 
