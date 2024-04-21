@@ -9,20 +9,29 @@ import (
 	"nftmarkets/entity"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// TODO Rest API:
-// - I can see all the items for the related user [X]
-// - I can get a single item [X]
-// - I can create new entries [X]
-// - I can update information of any of my items [x]
-// - I can delete any item [x]
-// - A purchasing endpoint that whenever is called reduces the availability of the item, and that fails if there is no availability [x]
+/**
+* ===============================
+* TODO Rest API:
+* ===============================
+* a I can see all the items for the related user [X]
+* b I can get a single item [X]
+* c I can create new entries [X]
+* d I can update information of any of my items [x]
+* e I can delete any item [x]
+* f A purchasing endpoint that whenever is called reduces the availability of the item, and that fails if there is no availability [x]
+* ===============================
+**/
+
+var Validate *validator.Validate
 
 type NftMarketplaceController struct {
-	Config config.KeyViperConfig
+	Config   config.KeyViperConfig
+	Validate *validator.Validate
 }
 
 // CreateItem creates a new item
@@ -32,6 +41,12 @@ func (h *NftMarketplaceController) CreateItem(ctx *gin.Context) {
 	// Bind the request body to the newItem variable
 	if err := ctx.BindJSON(&formdataProductNft); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
+
+	// Validate the input
+	if err := h.Validate.Struct(formdataProductNft); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error_validate": err.Error()})
 		return
 	}
 
@@ -114,6 +129,12 @@ func (h *NftMarketplaceController) UpdateItem(ctx *gin.Context) {
 	var updatedItem entity.ProductNft
 	if err := ctx.BindJSON(&updatedItem); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
+
+	// Validate the input
+	if err := h.Validate.Struct(updatedItem); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error_validate": err.Error()})
 		return
 	}
 
