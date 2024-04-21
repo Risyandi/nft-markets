@@ -25,7 +25,7 @@ import (
 
 type ProductNft struct {
 	ID           primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	ItemName     string             `json:"item_name" bson:"item_name" validate:"required,min=10"`
+	ItemName     string             `json:"item_name" bson:"item_name" validate:"required,min=10,forbiddenwords"`
 	Rating       int                `json:"rating" bson:"rating" validate:"required,min=0,max=5"`
 	Category     string             `json:"category" bson:"category" validate:"required,oneof=photo sketch cartoon animation"`
 	Image        string             `json:"image" bson:"image" validate:"required,url"`
