@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "your-name-apps",
+    "debug": true
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": ":8080",
+    "log": true
+  },
+  "database": {
+    "mongo": {
+      "host": "localhost",
+      "database": "your-name-database",
+      "user": "",
+      "password": "",
+      "port": ":27017"
+    }
+  }
+}
