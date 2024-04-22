@@ -7,6 +7,7 @@ import (
 	"nftmarkets/config"
 	"nftmarkets/database/mongodb"
 	"nftmarkets/entity"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -20,6 +21,10 @@ import (
 * ===============================
 * a I can see all the items for the related user [X]
 * b I can get a single item [X]
+* - Retrieve my items with rating = X
+* - Retrieve my items with X reputationBadge
+* - Retrieve my items with availability of more/less than X
+* - Retrieve my items with X category
 * c I can create new entries [X]
 * d I can update information of any of my items [x]
 * e I can delete any item [x]
@@ -32,6 +37,20 @@ var Validate *validator.Validate
 type NftMarketplaceController struct {
 	Config   config.KeyViperConfig
 	Validate *validator.Validate
+}
+
+// GetReputationBadgeFilter returns the reputation badge filter
+func GetReputationBadgeFilter(repBadge string) interface{} {
+	switch repBadge {
+	case "red":
+		return bson.M{"$lte": 500}
+	case "yellow":
+		return bson.M{"$lte": 799, "$gt": 500}
+	case "green":
+		return bson.M{"$gt": 799}
+	default:
+		return nil
+	}
 }
 
 // CreateItem creates a new item
@@ -65,8 +84,44 @@ func (h *NftMarketplaceController) CreateItem(ctx *gin.Context) {
 func (h *NftMarketplaceController) GetAllItems(ctx *gin.Context) {
 	var formdataProductNft []entity.ProductNft
 
+	filter := bson.M{}
+
+	// Optional query parameters
+	// ?rating=
+	if ratingStr := ctx.Query("rating"); ratingStr != "" {
+		rating, err := strconv.Atoi(ratingStr)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid rating parameter"})
+			return
+		}
+		filter["rating"] = rating
+	}
+
+	// ?reputation=
+	if repBadge := ctx.Query("reputationBadge"); repBadge != "" {
+		repBadgeFilter := GetReputationBadgeFilter(repBadge)
+		if repBadgeFilter != nil {
+			filter["reputation"] = repBadgeFilter
+		}
+	}
+
+	// ?availability=
+	if availabilityStr := ctx.Query("availability"); availabilityStr != "" {
+		availability, err := strconv.Atoi(availabilityStr)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid availability parameter"})
+			return
+		}
+		filter["availability"] = availability
+	}
+
+	// ?category=
+	if category := ctx.Query("category"); category != "" {
+		filter["category"] = category
+	}
+
 	// Find the items in the database
-	cursor, err := mongodb.Database.Collection("product_nft").Find(context.Background(), bson.M{})
+	cursor, err := mongodb.Database.Collection("product_nft").Find(context.Background(), filter)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get items"})
 		return
