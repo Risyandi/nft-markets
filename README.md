@@ -1,5 +1,5 @@
 # nft-markets
-repository for frontend and backend services for application nft markets
+repository for backend services for application nft markets
 
 ## installation 
 - install all dependency with typing the command below
