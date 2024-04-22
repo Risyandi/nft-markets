@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "96ef8acd-8c23-4f9d-be70-6abb7ea6fa76",
+		"name": "NFT Markets",
+		"description": "all things about rest api NFT markets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3528197"
+	},
+	"item": [
+		{
+			"name": "nft-markets-health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item_name\": \"NFT: Photo Mountain in Indonesia\",\r\n    \"rating\": 5,\r\n    \"category\": \"photo\",\r\n    \"image\": \"https://risyandi.com/\",\r\n    \"reputation\": 800,\r\n    \"price\": 25000000,\r\n    \"availability\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-byid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/6624b678eb1edfb91ced9293d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						"6624b678eb1edfb91ced9293d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						""
+					],
+					"query": [
+						{
+							"key": "rating",
+							"value": "4",
+							"description": "filter by rating (1 to 5)",
+							"disabled": true
+						},
+						{
+							"key": "reputationBadge",
+							"value": "red",
+							"description": "filter by reputation (<= 500 the value is red, <= 799 the value is yellow, Otherwise the value is green)",
+							"disabled": true
+						},
+						{
+							"key": "availability",
+							"value": "1",
+							"description": "filter by availability or stock (0 to n)",
+							"disabled": true
+						},
+						{
+							"key": "category",
+							"value": "animation",
+							"description": "filter by category one of [photo, sketch, cartoon, animation]",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-update-byid",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item_name\": \"EDIT NFT: Photo Mountain in Indonesia\",\r\n    \"rating\": 5,\r\n    \"category\": \"photo\",\r\n    \"image\": \"https://risyandi.com/\",\r\n    \"reputation\": 500,\r\n    \"price\": 15000000,\r\n    \"availability\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/6625c8678675b7d624220fde",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						"6625c8678675b7d624220fde"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-delete-byid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/6624b678eb1edfb91ced9293",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						"6624b678eb1edfb91ced9293"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nft-markets-purchase-byid",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item_name\": \"Photo Sepeda\",\r\n    \"rating\": 5,\r\n    \"category\": \"sport\",\r\n    \"image\": \"url://\",\r\n    \"reputation\": 6,\r\n    \"price\": 10000,\r\n    \"availability\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/nftmarkets/items/purchase/6624b678eb1edfb91ced9293",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"nftmarkets",
+						"items",
+						"purchase",
+						"6624b678eb1edfb91ced9293"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
