@@ -17,10 +17,12 @@ func main() {
 	*   1. Config environment
 	*   2. Routes
 	*   3. Middleware
+	*   4. Validator
 	**/
 
 	// Initialize the validator
 	validate = validator.New()
+
 	// Registering the custom validator
 	if err := validate.RegisterValidation("forbiddenwords", forbiddenWordsValidator); err != nil {
 		fmt.Printf("Failed to register custom validation: %v\n", err)

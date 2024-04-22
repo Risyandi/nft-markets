@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"nftmarkets/controllers/nftmarketplace"
 	"nftmarkets/database/mongodb"
+	"nftmarkets/helpers"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -21,6 +22,9 @@ func SetupRouter(validate *validator.Validate) *gin.Engine {
 	router.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 		SkipPaths: []string{"/"},
 	}))
+
+	// register error handler RFC7807 spec
+	router.Use(helpers.GinErrorHandler())
 
 	router.Use(gin.Recovery())
 	router.Use(cors.New(cors.Config{
