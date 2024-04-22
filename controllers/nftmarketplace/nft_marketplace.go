@@ -2,6 +2,7 @@ package nftmarketplace
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net/http"
 	"nftmarkets/config"
@@ -59,13 +60,14 @@ func (h *NftMarketplaceController) CreateItem(ctx *gin.Context) {
 
 	// Bind the request body to the newItem variable
 	if err := ctx.BindJSON(&formdataProductNft); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		err := errors.New("invalid request payload")
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// Validate the input
 	if err := h.Validate.Struct(formdataProductNft); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error_validate": err.Error()})
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -73,7 +75,8 @@ func (h *NftMarketplaceController) CreateItem(ctx *gin.Context) {
 	// Accessing collections within the database
 	_, err := mongodb.Database.Collection("product_nft").InsertOne(context.Background(), formdataProductNft)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create item"})
+		err := errors.New("failed to create item")
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
@@ -91,7 +94,8 @@ func (h *NftMarketplaceController) GetAllItems(ctx *gin.Context) {
 	if ratingStr := ctx.Query("rating"); ratingStr != "" {
 		rating, err := strconv.Atoi(ratingStr)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid rating parameter"})
+			err := errors.New("invalid rating parameter")
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 		filter["rating"] = rating
@@ -109,7 +113,8 @@ func (h *NftMarketplaceController) GetAllItems(ctx *gin.Context) {
 	if availabilityStr := ctx.Query("availability"); availabilityStr != "" {
 		availability, err := strconv.Atoi(availabilityStr)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid availability parameter"})
+			err := errors.New("invalid availability parameter")
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 		filter["availability"] = availability
@@ -123,7 +128,8 @@ func (h *NftMarketplaceController) GetAllItems(ctx *gin.Context) {
 	// Find the items in the database
 	cursor, err := mongodb.Database.Collection("product_nft").Find(context.Background(), filter)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get items"})
+		err := errors.New("failed to get items")
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	defer cursor.Close(context.Background())
@@ -157,7 +163,8 @@ func (h *NftMarketplaceController) GetItemByID(ctx *gin.Context) {
 
 	// Check if the item ID is valid
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID"})
+		err := errors.New("invalid item id")
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -177,26 +184,29 @@ func (h *NftMarketplaceController) UpdateItem(ctx *gin.Context) {
 	id := ctx.Param("id")
 	itemID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID"})
+		err := errors.New("invalid item id")
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	var updatedItem entity.ProductNft
 	if err := ctx.BindJSON(&updatedItem); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		err := errors.New("invalid request payload")
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// Validate the input
 	if err := h.Validate.Struct(updatedItem); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error_validate": err.Error()})
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// Update the item
 	_, err = mongodb.Database.Collection("product_nft").ReplaceOne(context.Background(), bson.M{"_id": itemID}, updatedItem)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update item"})
+		err := errors.New("failed to update item")
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
@@ -208,7 +218,8 @@ func (h *NftMarketplaceController) DeleteItem(ctx *gin.Context) {
 	id := ctx.Param("id")
 	itemID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID"})
+		err := errors.New("invalid item id")
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -227,7 +238,8 @@ func (h *NftMarketplaceController) PurchaseItem(c *gin.Context) {
 	id := c.Param("id")
 	itemID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID"})
+		err := errors.New("invalid item id")
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -239,7 +251,8 @@ func (h *NftMarketplaceController) PurchaseItem(c *gin.Context) {
 	}
 
 	if item.Availability <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Item is out of stock"})
+		err := errors.New("item is out of stock")
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -247,7 +260,8 @@ func (h *NftMarketplaceController) PurchaseItem(c *gin.Context) {
 	item.Availability--
 	_, err = mongodb.Database.Collection("product_nft").ReplaceOne(context.Background(), bson.M{"_id": itemID}, item)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update item"})
+		err := errors.New("failed purchase to item")
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
