@@ -24,3 +24,10 @@ repository for frontend and backend services for application nft markets
 ## requirement
 - go language version 1.22.1
 - mongo database
+
+## postman collection
+- you can import postman collection from folder
+  ```
+  /postman/nft-markets.postman_collection
+  ```
+  
