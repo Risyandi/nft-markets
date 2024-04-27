@@ -19,7 +19,8 @@ func Connect() {
 	mongoHost := config.GetString("database.mongo.host")
 	mongoPort := config.GetString("database.mongo.port")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
+	// set timeout connect to database
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	// Connect to MongoDB
