@@ -26,6 +26,7 @@ func (vr *viperConfig) InitConfig() {
 		panic(err)
 	}
 }
+
 func (vr *viperConfig) GetBool(key string) bool {
 	return viper.GetBool(key)
 }
