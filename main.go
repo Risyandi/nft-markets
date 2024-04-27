@@ -23,22 +23,26 @@ func main() {
 	// Initialize the validator
 	validate = validator.New()
 
-	// Registering the custom validator
+	// Registering the custom entity validator
 	if err := validate.RegisterValidation("forbiddenwords", forbiddenWordsValidator); err != nil {
 		fmt.Printf("Failed to register custom validation: %v\n", err)
 		return
 	}
 
+	// init config viper and setup router
 	config := config.ConfigViper()
 	router := routes.SetupRouter(validate)
 
+	// server log
 	if config.GetBool("server.log") {
 		router.Use(middleware.RequestLoggerMiddleware())
 	}
 
+	// Start the server spesific port
 	router.Run(config.GetString("server.port"))
 }
 
+// function custom validator for entity
 func forbiddenWordsValidator(fl validator.FieldLevel) bool {
 	// List of forbidden words
 	forbiddenWords := []string{"Sex", "Gay", "Lesbian"}
