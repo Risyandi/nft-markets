@@ -18,7 +18,7 @@ func SetupRouter(validate *validator.Validate) *gin.Engine {
 	// connection mongodb database
 	mongodb.Connect()
 
-	// skip base path
+	// skip base url path
 	router.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 		SkipPaths: []string{"/"},
 	}))
@@ -26,6 +26,7 @@ func SetupRouter(validate *validator.Validate) *gin.Engine {
 	// register error handler RFC7807 spec
 	router.Use(helpers.GinErrorHandler())
 
+	// gin recovery handle middleware error and enable cors configuration
 	router.Use(gin.Recovery())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
